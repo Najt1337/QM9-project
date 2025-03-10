@@ -6,7 +6,7 @@ class SMILESTokenizer:
         """
         Initializes the SMILES tokenizer with a vocabulary and token-to-ID mapping.
         """
-        # Vocabulary list (from earlier)
+        # Vocabulary list
         all_atoms = [
             'H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar',
             'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr',
