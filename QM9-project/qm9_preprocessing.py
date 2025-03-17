@@ -44,6 +44,8 @@ for SMILES in df['SMILES']:
     ids=tokenizer.encode(SMILES)
     SMILES_tokens_id.append(ids)
 
+#%%
+len(SMILES_tokens_id[0]),len(SMILES_tokens_id[124]),len(SMILES_tokens_id[7])
 # %%
 max_length=len(max(SMILES_tokens_id,key=len))
 print('SMILES max length:',max_length)
@@ -57,8 +59,8 @@ for SMILES in SMILES_padded:
     SMILES.extend(repeat(padding_id,max_length-len(SMILES)))
 
 # %%
-SMILESid_dataset=TensorDataset(torch.tensor(SMILES_tokens_id),torch.tensor(targets.values))
-num_features_dataset=TensorDataset(torch.tensor(num_features.values),torch.tensor(targets.values))
+SMILESid_dataset=TensorDataset(torch.tensor(SMILES_tokens_id),torch.tensor(targets.values).view(-1,1))
+num_features_dataset=TensorDataset(torch.tensor(num_features.values),torch.tensor(targets.values).view(-1,1))
 idx=list(range(len(SMILESid_dataset)))
 # %%
 train_idx, temp_idx = train_test_split(idx, test_size=0.2, random_state=42, shuffle=True)
