@@ -28,16 +28,6 @@ num_features=df.drop(['SMILES','U0'],axis=1)
 targets=df['U0']
 num_features
 # %%
-scaler = StandardScaler()
-for column in num_features.columns:
-    scaler.fit(num_features[column].values.reshape(-1, 1))
-    num_features[column] = scaler.transform(num_features[column].values.reshape(-1, 1))
-
-scaler2 = MinMaxScaler(feature_range=(-1, 1))
-for column in num_features.columns:
-    scaler2.fit(num_features[column].values.reshape(-1, 1))
-    num_features[column] = scaler2.transform(num_features[column].values.reshape(-1, 1))
-# %%
 tokenizer=SMILESTokenizer()
 SMILES_tokens_id=[]
 for SMILES in df['SMILES']:
@@ -59,18 +49,42 @@ for SMILES in SMILES_padded:
     SMILES.extend(repeat(padding_id,max_length-len(SMILES)))
 
 # %%
-SMILESid_dataset=TensorDataset(torch.tensor(SMILES_tokens_id),torch.tensor(targets.values).view(-1,1))
-num_features_dataset=TensorDataset(torch.tensor(num_features.values),torch.tensor(targets.values).view(-1,1))
+SMILESid_dataset=TensorDataset(torch.tensor(SMILES_tokens_id,dtype=torch.float),torch.tensor(targets.values,dtype=torch.float).view(-1,1))
 idx=list(range(len(SMILESid_dataset)))
-# %%
 train_idx, temp_idx = train_test_split(idx, test_size=0.2, random_state=42, shuffle=True)
 val_idx, test_idx = train_test_split(temp_idx, test_size=0.5, random_state=42)
+
+res_train_df=num_features.iloc[train_idx]
+res_val_df=num_features.iloc[val_idx]
+res_test_df=num_features.iloc[test_idx]
+target_train=targets.iloc[train_idx]
+target_val=targets.iloc[val_idx]
+target_test=targets.iloc[test_idx]
+
+res_train_df.head()
+#%%
+scaler = StandardScaler()
+scaler2 = MinMaxScaler(feature_range=(-1, 1))
+res_splits=[res_train_df,res_val_df,res_test_df]
+
+for split in res_splits:
+    for column in split.columns:
+        scaler.fit(split[column].values.reshape(-1, 1))
+        split[column] = scaler.transform(split[column].values.reshape(-1, 1))
+
+
+    for column in split.columns:
+        scaler2.fit(split[column].values.reshape(-1, 1))
+        split[column] = scaler2.transform(split[column].values.reshape(-1, 1))
+
 # %%
+
 transformer_train_dataset = Subset(SMILESid_dataset, train_idx)
 transformer_val_dataset = Subset(SMILESid_dataset, val_idx)
 transformer_test_dataset = Subset(SMILESid_dataset, test_idx)
 
-res_train_dataset = Subset(num_features_dataset, train_idx)
-res_val_dataset = Subset(num_features_dataset, val_idx)
-res_test_dataset = Subset(num_features_dataset, test_idx)
+res_train_dataset = TensorDataset(torch.tensor(res_train_df.values,dtype=torch.float),torch.tensor(target_train.values,dtype=torch.float).view(-1,1))
+res_val_dataset = TensorDataset(torch.tensor(res_train_df.values,dtype=torch.float),torch.tensor(target_train.values,dtype=torch.float).view(-1,1))
+res_test_dataset = TensorDataset(torch.tensor(res_train_df.values,dtype=torch.float),torch.tensor(target_train.values,dtype=torch.float).view(-1,1))
 
+# %%
