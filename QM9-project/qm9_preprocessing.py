@@ -34,8 +34,6 @@ for SMILES in df['SMILES']:
     ids=tokenizer.encode(SMILES)
     SMILES_tokens_id.append(ids)
 
-#%%
-len(SMILES_tokens_id[0]),len(SMILES_tokens_id[124]),len(SMILES_tokens_id[7])
 # %%
 max_length=len(max(SMILES_tokens_id,key=len))
 print('SMILES max length:',max_length)
