@@ -82,7 +82,7 @@ transformer_val_dataset = Subset(SMILESid_dataset, val_idx)
 transformer_test_dataset = Subset(SMILESid_dataset, test_idx)
 
 res_train_dataset = TensorDataset(torch.tensor(res_train_df.values,dtype=torch.float),torch.tensor(target_train.values,dtype=torch.float).view(-1,1))
-res_val_dataset = TensorDataset(torch.tensor(res_train_df.values,dtype=torch.float),torch.tensor(target_train.values,dtype=torch.float).view(-1,1))
-res_test_dataset = TensorDataset(torch.tensor(res_train_df.values,dtype=torch.float),torch.tensor(target_train.values,dtype=torch.float).view(-1,1))
+res_val_dataset = TensorDataset(torch.tensor(res_val_df.values,dtype=torch.float),torch.tensor(target_val.values,dtype=torch.float).view(-1,1))
+res_test_dataset = TensorDataset(torch.tensor(res_test_df.values,dtype=torch.float),torch.tensor(target_test.values,dtype=torch.float).view(-1,1))
 
 # %%
