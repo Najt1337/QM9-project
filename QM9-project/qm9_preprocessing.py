@@ -49,7 +49,7 @@ for SMILES in SMILES_padded:
 # %%
 SMILESid_dataset=TensorDataset(torch.tensor(SMILES_tokens_id,dtype=torch.float),torch.tensor(targets.values,dtype=torch.float).view(-1,1))
 idx=list(range(len(SMILESid_dataset)))
-train_idx, temp_idx = train_test_split(idx, test_size=0.2, random_state=42, shuffle=True)
+train_idx, temp_idx = train_test_split(idx, test_size=0.3, random_state=42, shuffle=True)
 val_idx, test_idx = train_test_split(temp_idx, test_size=0.5, random_state=42)
 
 res_train_df=num_features.iloc[train_idx]
@@ -63,17 +63,9 @@ res_train_df.head()
 #%%
 scaler = StandardScaler()
 scaler2 = MinMaxScaler(feature_range=(-1, 1))
-res_splits=[res_train_df,res_val_df,res_test_df]
-
-for split in res_splits:
-    for column in split.columns:
-        scaler.fit(split[column].values.reshape(-1, 1))
-        split[column] = scaler.transform(split[column].values.reshape(-1, 1))
-
-
-    for column in split.columns:
-        scaler2.fit(split[column].values.reshape(-1, 1))
-        split[column] = scaler2.transform(split[column].values.reshape(-1, 1))
+res_train=scaler.fit_transform(res_train_df)
+res_val=scaler.transform(res_val_df)
+res_test=scaler.transform(res_test_df)
 
 # %%
 
@@ -81,8 +73,8 @@ transformer_train_dataset = Subset(SMILESid_dataset, train_idx)
 transformer_val_dataset = Subset(SMILESid_dataset, val_idx)
 transformer_test_dataset = Subset(SMILESid_dataset, test_idx)
 
-res_train_dataset = TensorDataset(torch.tensor(res_train_df.values,dtype=torch.float),torch.tensor(target_train.values,dtype=torch.float).view(-1,1))
-res_val_dataset = TensorDataset(torch.tensor(res_val_df.values,dtype=torch.float),torch.tensor(target_val.values,dtype=torch.float).view(-1,1))
-res_test_dataset = TensorDataset(torch.tensor(res_test_df.values,dtype=torch.float),torch.tensor(target_test.values,dtype=torch.float).view(-1,1))
+res_train_dataset = TensorDataset(torch.tensor(res_train,dtype=torch.float),torch.tensor(target_train.values,dtype=torch.float).view(-1,1))
+res_val_dataset = TensorDataset(torch.tensor(res_val,dtype=torch.float),torch.tensor(target_val.values,dtype=torch.float).view(-1,1))
+res_test_dataset = TensorDataset(torch.tensor(res_test,dtype=torch.float),torch.tensor(target_test.values,dtype=torch.float).view(-1,1))
 
 # %%
